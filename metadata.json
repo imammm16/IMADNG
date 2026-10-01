@@ -1,0 +1,6 @@
+{
+  "name": "ImmAdNgrh. Atelier",
+  "description": "Avant-garde continuum of architectural precision, tactile materiality, and computational sartorial form.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
