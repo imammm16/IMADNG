@@ -11,13 +11,6 @@ export const BrandManifesto: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Left Editorial Quote & Story */}
           <div className="lg:col-span-7 space-y-6">
-            <div className="flex items-center gap-2">
-              <span className="w-8 h-[2px] bg-[#0056c8]" />
-              <span className="text-xs uppercase tracking-widest text-[#0056c8] font-bold">
-                {isId ? 'Manifesto Desain' : 'Design Manifesto'}
-              </span>
-            </div>
-
             <h2 className="text-4xl md:text-5xl font-extrabold text-[#1c1b1b] tracking-tight font-display text-balance">
               {isId ? 'Melampaui Sekadar T-Shirt.' : 'More Than A T-Shirt.'}
             </h2>

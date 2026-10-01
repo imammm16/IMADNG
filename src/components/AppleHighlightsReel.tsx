@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocalization } from '../context/LocalizationContext';
 import { Product } from '../types';
+import slide2AtelierImg from '../assets/images/atelier_studio_drafting_slide2_1790897759843.jpg';
 
 interface HighlightSlide {
   id: string;
@@ -28,13 +29,13 @@ const HIGHLIGHT_SLIDES: HighlightSlide[] = [
   },
   {
     id: 'slide-2',
-    taglineId: 'Siluet Runway 2026',
-    taglineEn: 'Runway Silhouette 2026',
-    headlineId: 'Siluet Boxy Arsitektural Dalam Gerak.',
-    headlineEn: 'Sculptural Boxy Drape In Kinetic Motion.',
+    taglineId: 'Siluet & Konstruksi Presisi',
+    taglineEn: 'Precision Silhouette & Construction',
+    headlineId: 'Konstruksi Arsitektural Presisi Tinggi.',
+    headlineEn: 'Sculptural Precision Pattern Architecture.',
     descId: 'Rancang bangun dengan garis bahu maju 12° yang mempertahankan postur busana, baik saat berdiri tegak maupun melangkah.',
     descEn: 'Engineered with 12° forward-pitched shoulder seams preserving clean garment silhouette whether standing still or in stride.',
-    image: '/src/assets/images/runway_look_editorial_1790336620676.jpg',
+    image: slide2AtelierImg,
     targetProductId: 'tee-02',
   },
   {

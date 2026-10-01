@@ -59,10 +59,34 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const [promoSuccess, setPromoSuccess] = useState<string | null>(null);
 
   const PROMO_CODES: Record<string, { percent: number; label: string }> = {
+    ZXCVBNM: { percent: 50, label: 'Diskon 50%' },
     ZXCVBNNM: { percent: 10, label: 'Diskon 10%' },
     IMMADN: { percent: 40, label: 'Diskon 40%' },
     ATKPJILSTRI: { percent: 80, label: 'Diskon 80%' },
   };
+
+  // Auto-apply saved promo from Profile Redeem Code tab if available
+  useEffect(() => {
+    if (isOpen) {
+      try {
+        const saved = localStorage.getItem('imm_redeemed_promo');
+        if (saved) {
+          const promo = JSON.parse(saved);
+          const upperCode = promo?.code?.toUpperCase();
+          if (upperCode && PROMO_CODES[upperCode]) {
+            setAppliedPromo({
+              code: upperCode,
+              percent: PROMO_CODES[upperCode].percent,
+              label: PROMO_CODES[upperCode].label,
+            });
+            setPromoInput(upperCode);
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, [isOpen]);
 
   const handleApplyPromo = (codeToApply?: string) => {
     const raw = codeToApply !== undefined ? codeToApply : promoInput;

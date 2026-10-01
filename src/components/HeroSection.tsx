@@ -1,6 +1,7 @@
 import React from 'react';
 import { Product } from '../types';
 import { useLocalization } from '../context/LocalizationContext';
+import heroStudioTeeImg from '../assets/images/hero_boxy_studio_tee_1790896784209.jpg';
 
 interface HeroSectionProps {
   heroProduct: Product;
@@ -64,9 +65,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <div className="animate-drift transition-transform duration-700 ease-out group-hover:scale-[1.03]">
               <div className="rounded-[32px] sm:rounded-[40px] md:rounded-[48px] overflow-hidden shadow-[0_24px_50px_-12px_rgba(20,110,245,0.18),0_12px_32px_rgba(0,0,0,0.08)] border border-black/[0.06] bg-white/70 backdrop-blur-md p-3 sm:p-4 transition-all duration-500 group-hover:shadow-[0_32px_60px_-12px_rgba(20,110,245,0.25)]">
                 <img
-                  src={heroProduct.image}
-                  alt="ImmAdNgrh. Essential Pure White Luxury Tee"
-                  className="w-full h-auto max-h-[300px] sm:max-h-[420px] md:max-h-[500px] object-contain rounded-[24px] sm:rounded-[32px] md:rounded-[40px] transition-all duration-700"
+                  src={heroStudioTeeImg}
+                  alt="ImmAdNgrh. Essential Pure White Studio Boxy Tee"
+                  className="w-full h-auto max-h-[300px] sm:max-h-[420px] md:max-h-[500px] object-cover rounded-[24px] sm:rounded-[32px] md:rounded-[40px] shadow-sm transition-all duration-700"
                 />
               </div>
             </div>

@@ -420,7 +420,7 @@ const TRANSLATIONS: Record<Language, Translations> = {
     footerPrivacy: 'Privacy Policy',
     footerTerms: 'Terms of Allocation',
     footerSustainability: 'Sustainability & Zero-Torque',
-    footerCopyright: 'ImmAdNgrh. Atelier. All rights reserved.',
+    footerCopyright: 'ImmAdNgrh. All rights reserved.',
   },
 
   id: {
@@ -623,7 +623,7 @@ const TRANSLATIONS: Record<Language, Translations> = {
     footerPrivacy: 'Kebijakan Privasi',
     footerTerms: 'Ketentuan Alokasi',
     footerSustainability: 'Keberlanjutan & Zero-Torque',
-    footerCopyright: 'ImmAdNgrh. Atelier. Hak cipta dilindungi.',
+    footerCopyright: 'ImmAdNgrh. All rights reserved.',
   },
 };
 

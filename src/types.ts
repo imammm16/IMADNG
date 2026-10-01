@@ -37,7 +37,7 @@ export interface OrderItem {
   date: string;
   totalAmount: number;
   paymentMethod: string;
-  status: 'Dipotong & Dijahit' | 'Proses QC' | 'Dalam Pengiriman' | 'Selesai';
+  status: 'Cutting & Sewing' | 'QC Inspection' | 'In Transit' | 'Delivered' | 'Dipotong & Dijahit' | 'Proses QC' | 'Dalam Pengiriman' | 'Sampai' | 'Selesai';
   statusStep: number;
   courier: string;
   trackingNumber: string;

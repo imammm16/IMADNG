@@ -1,4 +1,8 @@
 import { Product } from '../types';
+import featuredWhiteTee from '../assets/images/featured_white_tee_1790863611827.jpg';
+import featuredBlackSignature from '../assets/images/featured_black_signature_1790863627706.jpg';
+import featuredPhantomBoxy from '../assets/images/featured_phantom_boxy_1790863645176.jpg';
+import featuredHeatherGray from '../assets/images/featured_heather_gray_1790863659881.jpg';
 
 export const PRODUCTS: Product[] = [
   {
@@ -11,7 +15,7 @@ export const PRODUCTS: Product[] = [
     color: 'Pure White',
     category: 'essentials',
     tag: 'ICONIC',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBxFxFlsmFr5ETdj1pH8YkG3-QnRrhFMGpgqLwgnjyhVYuYp_Bl1ujUsA6PjOjyZoHHaD5PcbJtynNrEesYyHYy52z_kKGGwwTzpvIKd_PHHmZGvMs4Nez-LeODbSVohycdtZHv2zcQWWsn2sv5Me87mGM3wXDtdPN_QZjP9JBlWbeilNEagp9vpjtWIDZLc7csIRIdw_0mUJMZXCZJeT9Tq-r14NZrM2E0fkviD54p33ajobmqk951',
+    image: featuredWhiteTee,
     description: 'Sculptural ergonomic silhouette crafted from double-mercerized 320 GSM French Terry. Pre-shrunk for permanent structural bias.',
     swatches: ['#FFFFFF', '#1A1A1A', '#9E9E9E', '#0D1F3C'],
     availableSizes: ['1 (S)', '2 (M)', '3 (L)', '4 (XL)']
@@ -26,7 +30,7 @@ export const PRODUCTS: Product[] = [
     color: 'Obsidian Black',
     category: 'oversized',
     tag: 'BESTSELLER',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCNtMt1iU_Jklg7JRFvidUNaLDRowl7Ea501mhM8U922XkXVXy8ssxzeCGTVYssiwnlpPbM2hlYDL2UX_NF54aQzBGAq1FxeLr_oOb27lOZdvyIkWGPDpDct4jYJnOqyfMYpfXYQzI-l3U0xhnf8oJzqsusADC4Bd-agNEb4vhCeizDvGR5tLTmxlUWBoAv7Qu-dToWj2RMgiqfyydM9RisbNHVDEw997SPd1vC_YYeWntbuHetQUKY',
+    image: featuredBlackSignature,
     description: 'Refined essentials designed with a modern perspective. Ultra-dense 320 GSM interlock weave holding a permanent structural profile in obsidian black.',
     swatches: ['#1A1A1A', '#FFFFFF', '#4A4F55'],
     availableSizes: ['1 (S)', '2 (M)', '3 (L)', '4 (XL)']
@@ -41,7 +45,7 @@ export const PRODUCTS: Product[] = [
     color: 'Phantom Black',
     category: 'oversized',
     tag: 'NEW ARRIVAL',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCNtMt1iU_Jklg7JRFvidUNaLDRowl7Ea501mhM8U922XkXVXy8ssxzeCGTVYssiwnlpPbM2hlYDL2UX_NF54aQzBGAq1FxeLr_oOb27lOZdvyIkWGPDpDct4jYJnOqyfMYpfXYQzI-l3U0xhnf8oJzqsusADC4Bd-agNEb4vhCeizDvGR5tLTmxlUWBoAv7Qu-dToWj2RMgiqfyydM9RisbNHVDEw997SPd1vC_YYeWntbuHetQUKY',
+    image: featuredPhantomBoxy,
     description: 'Sculptural boxy tailoring created with digital pattern algorithms. Features zero shoulder slope and double-needle reinforced neck collar.',
     swatches: ['#111111', '#FFFFFF', '#2A374A'],
     availableSizes: ['1 (S)', '2 (M)', '3 (L)', '4 (XL)']
@@ -56,7 +60,7 @@ export const PRODUCTS: Product[] = [
     color: 'Heather Gray',
     category: 'essentials',
     tag: 'TAILORED',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAWowrSlA6JW-bOmR_pj0gvXcorjQ_7aI3iNCFf7jmdqCQDBg-khevNpoLBI7X6Ts3vPd4HPeWhc_s2Xb-iKGaZUWTg_7sT5D8NrWq1oJnrr7NxM_p_bAdHavVsIS3jABtEQg6_ryElOl1UjZuSfPa59a2OG0hEQqCHiC04Py6B-rm4NNPqnr0rvPhqNm-blOABrruDCub3dvyWOdaA1-ZRNwwbsDsk0uJmOPe4zwX68p8awWkUKoLm',
+    image: featuredHeatherGray,
     description: 'Tailored for fluid movement with an elongated silhouette and softened seam finishes. Designed to harmonize with architectural separates.',
     swatches: ['#A8ABB0', '#FFFFFF', '#1A1A1A'],
     availableSizes: ['1 (S)', '2 (M)', '3 (L)', '4 (XL)']

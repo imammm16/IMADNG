@@ -91,20 +91,20 @@ export const NewCollectionGrid: React.FC<NewCollectionGridProps> = ({
           </div>
         </div>
 
-        {/* 4-Item Grid (Clean & Premium Minimalist) */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+        {/* 4-Item Grid (Premium Curved & Distinct Model Outfits) */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-6">
           {filteredProducts.map(product => (
             <div
               key={product.id}
               onClick={() => onQuickView(product)}
-              className="group flex flex-col bg-white rounded-2xl p-2.5 sm:p-3.5 product-card-hover cursor-pointer border border-gray-100 shadow-2xs hover:shadow-md transition-all duration-300"
+              className="group flex flex-col bg-white rounded-3xl p-3 sm:p-4 cursor-pointer border border-gray-100/80 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300"
             >
-              {/* Product Visual Container */}
-              <div className="relative w-full aspect-[4/5] bg-[#f6f3f2] rounded-xl overflow-hidden flex items-center justify-center p-2.5 sm:p-4">
+              {/* Product Visual Container with Smooth Curved Corners */}
+              <div className="relative w-full aspect-[3/4] bg-[#eceef0] rounded-2xl overflow-hidden border border-black/5 shadow-inner flex items-center justify-center">
                 {/* Minimal Tag Badge */}
                 {product.tag && (
-                  <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10">
-                    <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full glass-pill text-[8px] sm:text-[9px] uppercase tracking-widest text-[#1c1b1b] font-bold">
+                  <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 z-10">
+                    <span className="px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md text-[8px] sm:text-[9px] uppercase tracking-widest text-[#1c1b1b] font-bold border border-black/10 shadow-xs">
                       {product.tag}
                     </span>
                   </div>
@@ -114,28 +114,28 @@ export const NewCollectionGrid: React.FC<NewCollectionGridProps> = ({
                 <button
                   onClick={e => toggleFavorite(product.id, e)}
                   aria-label="Favorite item"
-                  className="absolute top-2 right-2 sm:top-3 sm:right-3 z-10 w-7 h-7 sm:w-8 sm:h-8 rounded-full glass-pill flex items-center justify-center text-[#424655] hover:text-[#0056c8] transition-all duration-300 active:scale-90"
+                  className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center text-[#424655] hover:text-[#0056c8] transition-all duration-300 active:scale-90 border border-black/10 shadow-xs"
                 >
-                  <span className={`material-symbols-outlined text-[15px] sm:text-[18px] transition-transform duration-300 ${favorites[product.id] ? 'text-red-500 fill-current scale-110' : ''}`}>
+                  <span className={`material-symbols-outlined text-[16px] sm:text-[18px] transition-transform duration-300 ${favorites[product.id] ? 'text-red-500 fill-current scale-110' : ''}`}>
                     favorite
                   </span>
                 </button>
 
-                {/* Product Image */}
+                {/* Product Image - Distinct Model Outfits */}
                 <img
                   src={product.image}
                   alt={product.name}
-                  className="w-full h-full object-contain img-smooth-zoom"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                 />
 
                 {/* Quick Actions Overlay */}
-                <div className="absolute inset-x-2 bottom-2 sm:inset-x-3 sm:bottom-3 z-20 opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out flex items-center gap-1.5">
+                <div className="absolute inset-x-2.5 bottom-2.5 sm:inset-x-3 sm:bottom-3 z-20 opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out flex items-center gap-1.5">
                   <button
                     onClick={e => {
                       e.stopPropagation();
                       onQuickView(product);
                     }}
-                    className="flex-1 py-1.5 sm:py-2 rounded-full glass-card text-[#1c1b1b] text-[10px] sm:text-xs font-semibold hover:bg-[#1c1b1b] hover:text-white transition-all duration-300 flex items-center justify-center gap-1.5 shadow-md btn-spring"
+                    className="flex-1 py-2 rounded-full bg-white/95 backdrop-blur-md text-[#1c1b1b] text-[10px] sm:text-xs font-bold hover:bg-[#1c1b1b] hover:text-white transition-all duration-300 flex items-center justify-center gap-1.5 shadow-lg btn-spring border border-black/10"
                   >
                     <span>{t.quickView}</span>
                   </button>
@@ -145,7 +145,7 @@ export const NewCollectionGrid: React.FC<NewCollectionGridProps> = ({
                       onAddToCart(product);
                     }}
                     title="Alokasi Cepat ke Tas"
-                    className="w-8 sm:w-9 h-8 sm:h-9 rounded-full bg-[#1c1b1b] text-white hover:bg-[#0056c8] transition-all duration-300 flex items-center justify-center shadow-md btn-spring shrink-0"
+                    className="w-8 sm:w-9 h-8 sm:h-9 rounded-full bg-[#1c1b1b] text-white hover:bg-[#0056c8] transition-all duration-300 flex items-center justify-center shadow-lg btn-spring shrink-0"
                   >
                     <span className="material-symbols-outlined text-[16px]">add_shopping_cart</span>
                   </button>
@@ -153,7 +153,7 @@ export const NewCollectionGrid: React.FC<NewCollectionGridProps> = ({
               </div>
 
               {/* Ultra Clean & Simple Product Info */}
-              <div className="flex flex-col pt-2.5 sm:pt-3 px-0.5 sm:px-1 space-y-0.5 sm:space-y-1">
+              <div className="flex flex-col pt-3 px-0.5 space-y-1">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-0.5">
                   <h3 className="text-xs sm:text-sm font-bold text-[#1c1b1b] tracking-tight group-hover:text-[#0056c8] transition-colors duration-300 font-display line-clamp-1">
                     {product.name}
@@ -167,7 +167,7 @@ export const NewCollectionGrid: React.FC<NewCollectionGridProps> = ({
                 </p>
 
                 {/* Color Swatches */}
-                <div className="flex items-center gap-1 sm:gap-1.5 pt-0.5 sm:pt-1">
+                <div className="flex items-center gap-1 sm:gap-1.5 pt-1">
                   {product.swatches.map((colorHex, idx) => (
                     <span
                       key={idx}

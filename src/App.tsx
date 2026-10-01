@@ -21,6 +21,7 @@ import { AppleHighlightsReel } from './components/AppleHighlightsReel';
 import { AtelierStudioConfigurator } from './components/AtelierStudioConfigurator';
 import { RunwayLookbook } from './components/RunwayLookbook';
 import { AtelierKeynoteStats } from './components/AtelierKeynoteStats';
+import { Boxy3x2Grid } from './components/Boxy3x2Grid';
 import { LuxuryCartAllocationToast, AllocationPayload } from './components/LuxuryCartAllocationToast';
 
 export default function App() {
@@ -192,7 +193,7 @@ export default function App() {
         <main className="flex-1 w-full">
           {activeTab === 'home' && (
             <div className="space-y-4">
-              {/* Hero Keynote Section */}
+              {/* Hero Keynote Section (Page 1) */}
               <HeroSection
                 heroProduct={PRODUCTS[0]} // Pure White Essential Tee
                 onShopClick={() => handleNavigateTab('shop')}
@@ -202,6 +203,15 @@ export default function App() {
                   if (el) el.scrollIntoView({ behavior: 'smooth' });
                 }}
               />
+
+              {/* BØXY 3x2 Editorial Product Grid (Page 2) */}
+              <ScrollReveal delayMs={30}>
+                <Boxy3x2Grid
+                  products={PRODUCTS}
+                  onQuickView={(p) => setQuickViewProduct(p)}
+                  onAddToCart={handleAddToCart}
+                />
+              </ScrollReveal>
 
               {/* Apple-style Cinematic Highlights Reel */}
               <div id="highlights">

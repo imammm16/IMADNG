@@ -17,7 +17,8 @@ export type ProfileTab =
   | 'orders'
   | 'settings'
   | 'sizing'
-  | 'support';
+  | 'support'
+  | 'redeem';
 
 export const ProfileHub: React.FC<ProfileHubProps> = ({
   currentUser,
@@ -32,14 +33,43 @@ export const ProfileHub: React.FC<ProfileHubProps> = ({
   // Global Language & Currency from LocalizationContext (affects the entire website)
   const { language, setLanguage, currency, setCurrency, formatPrice } = useLocalization();
 
-  // Orders State: Initially empty for new users, populated if user placed orders from catalogue
+  // Default sample active order for live tracking demonstration
+  const initialSampleOrder: OrderItem = {
+    id: 'ord-sample-01',
+    orderNumber: '#IMM-8921',
+    date: '01 Okt 2026',
+    totalAmount: 215000,
+    paymentMethod: 'QRIS (Lunas)',
+    status: 'Cutting & Sewing',
+    statusStep: 1,
+    courier: 'Express Courier VIP',
+    trackingNumber: 'VIP-7789-IND',
+    shippingAddress: 'Jl. Senopati No. 42, Jakarta Selatan, 12190',
+    items: [
+      {
+        name: 'Essential Pure White Boxy Tee',
+        size: '2 (M)',
+        color: 'Pure White',
+        gsm: '320 GSM',
+        price: 215000,
+        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBxFxFlsmFr5ETdj1pH8YkG3-QnRrhFMGpgqLwgnjyhVYuYp_Bl1ujUsA6PjOjyZoHHaD5PcbJtynNrEesYyHYy52z_kKGGwwTzpvIKd_PHHmZGvMs4Nez-LeODbSVohycdtZHv2zcQWWsn2sv5Me87mGM3wXDtdPN_QZjP9JBlWbeilNEagp9vpjtWIDZLc7csIRIdw_0mUJMZXCZJeT9Tq-r14NZrM2E0fkviD54p33ajobmqk951',
+        quantity: 1,
+      },
+    ],
+  };
+
+  // Orders State: Initially populated with user orders or sample active order
   const [orders, setOrders] = useState<OrderItem[]>(() => {
     if (userOrders && userOrders.length > 0) return userOrders;
     try {
       const saved = localStorage.getItem('imm_user_orders');
-      return saved ? JSON.parse(saved) : [];
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+      return [initialSampleOrder];
     } catch {
-      return [];
+      return [initialSampleOrder];
     }
   });
 
@@ -50,13 +80,67 @@ export const ProfileHub: React.FC<ProfileHubProps> = ({
     }
   }, [userOrders]);
 
+  // Automatic Step Progress Timer: Advances active shipments every 5 seconds (5000ms)
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setOrders((prevOrders) => {
+        let hasChanges = false;
+        const nextOrders = prevOrders.map((ord) => {
+          if (ord.status !== 'Selesai' && (ord.statusStep || 1) < 4) {
+            hasChanges = true;
+            const nextStep = (ord.statusStep || 1) + 1;
+            const stepStatuses: OrderItem['status'][] = [
+              'Cutting & Sewing',
+              'QC Inspection',
+              'In Transit',
+              'Delivered',
+            ];
+            return {
+              ...ord,
+              statusStep: nextStep,
+              status: stepStatuses[nextStep - 1],
+            };
+          }
+          return ord;
+        });
+
+        if (hasChanges) {
+          try {
+            localStorage.setItem('imm_user_orders', JSON.stringify(nextOrders));
+          } catch (e) {
+            console.error(e);
+          }
+          return nextOrders;
+        }
+        return prevOrders;
+      });
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  // Order Details / Tracking / Invoice Modals
+  const [selectedOrder, setSelectedOrder] = useState<OrderItem | null>(null);
+  const [showInvoiceOrder, setShowInvoiceOrder] = useState<OrderItem | null>(null);
+  const [orderFilter, setOrderFilter] = useState<'all' | 'progress' | 'completed'>('all');
+
+  // Sync selectedOrder with updated live orders state
+  useEffect(() => {
+    if (selectedOrder) {
+      const updated = orders.find((o) => o.id === selectedOrder.id);
+      if (updated && (updated.statusStep !== selectedOrder.statusStep || updated.status !== selectedOrder.status)) {
+        setSelectedOrder(updated);
+      }
+    }
+  }, [orders, selectedOrder]);
+
   // Personal Profile Info States
   const [name, setName] = useState(currentUser.name || 'Client');
   const [username, setUsername] = useState(
     currentUser.name ? `@${currentUser.name.toLowerCase().replace(/\s+/g, '.')}` : '@atelier.client'
   );
   const [email, setEmail] = useState(currentUser.email || '');
-  const [phone, setPhone] = useState('+62 812-3456-7890');
+  const [phone, setPhone] = useState('0857 1230 8673');
   const [gender, setGender] = useState<'male' | 'female' | 'unspecified'>('male');
   const [birthDate, setBirthDate] = useState('1998-05-14');
   const [bio, setBio] = useState('Architectural silhouette enthusiast. Prioritizing 320 GSM & 360 GSM drape integrity.');
@@ -85,10 +169,87 @@ export const ProfileHub: React.FC<ProfileHubProps> = ({
   // Logout Confirmation Modal
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
-  // Order Details / Tracking / Invoice Modals
-  const [selectedOrder, setSelectedOrder] = useState<OrderItem | null>(null);
-  const [showInvoiceOrder, setShowInvoiceOrder] = useState<OrderItem | null>(null);
-  const [orderFilter, setOrderFilter] = useState<'all' | 'progress' | 'completed'>('all');
+  // Redeem Code States
+  const [redeemInput, setRedeemInput] = useState('');
+  const [redeemError, setRedeemError] = useState<string | null>(null);
+  const [redeemSuccess, setRedeemSuccess] = useState<string | null>(null);
+  const [activeRedeemedPromo, setActiveRedeemedPromo] = useState<{
+    code: string;
+    percent: number;
+    label: string;
+  } | null>(() => {
+    try {
+      const saved = localStorage.getItem('imm_redeemed_promo');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const handleRedeemCode = (e: React.FormEvent) => {
+    e.preventDefault();
+    setRedeemError(null);
+    setRedeemSuccess(null);
+
+    const rawCode = redeemInput.trim();
+    const upper = rawCode.toUpperCase();
+
+    if (!rawCode) {
+      setRedeemError(isEn ? 'Please fill in the redeem code correctly.' : 'Harap isi dengan benar.');
+      return;
+    }
+
+    const REDEEM_CATALOG: Record<string, { percent: number; label: string }> = {
+      ZXCVBNM: { percent: 50, label: 'Diskon 50%' },
+      ZXCVBNNM: { percent: 10, label: 'Diskon 10%' },
+      IMMADN: { percent: 40, label: 'Diskon 40%' },
+      ATKPJILSTRI: { percent: 80, label: 'Diskon 80%' },
+    };
+
+    if (REDEEM_CATALOG[upper]) {
+      const matched = REDEEM_CATALOG[upper];
+      const promoObj = {
+        code: rawCode,
+        percent: matched.percent,
+        label: matched.label,
+      };
+      setActiveRedeemedPromo(promoObj);
+      try {
+        localStorage.setItem('imm_redeemed_promo', JSON.stringify(promoObj));
+      } catch (err) {
+        console.error(err);
+      }
+      setRedeemSuccess(
+        isEn
+          ? `Code "${rawCode}" redeemed successfully! You get ${matched.percent}% discount.`
+          : `Kode "${rawCode}" berhasil ditukarkan! Anda mendapatkan potongan harga ${matched.percent}%.`
+      );
+      showToast(
+        isEn
+          ? `Redeem code ${matched.percent}% active!`
+          : `Kode redeem diskon ${matched.percent}% berhasil diklaim!`
+      );
+      setRedeemInput('');
+    } else {
+      setRedeemError(
+        isEn
+          ? 'Invalid or expired redeem code. Please verify your code and try again.'
+          : 'Kode redeem tidak valid. Pastikan Anda mengisinya dengan benar.'
+      );
+    }
+  };
+
+  const handleRemoveRedeemedPromo = () => {
+    setActiveRedeemedPromo(null);
+    try {
+      localStorage.removeItem('imm_redeemed_promo');
+    } catch (e) {
+      console.error(e);
+    }
+    setRedeemSuccess(null);
+    setRedeemError(null);
+    showToast(isEn ? 'Redeemed code removed.' : 'Kode redeem berhasil dihapus.');
+  };
 
   // Translations dictionary
   const isEn = language === 'en';
@@ -251,7 +412,37 @@ export const ProfileHub: React.FC<ProfileHubProps> = ({
     return true;
   });
 
-  // Handle Save Personal Profile
+  // Complete Order & Move to History
+  const handleCompleteOrder = (orderId: string) => {
+    setOrders((prevOrders) => {
+      const updated = prevOrders.map((ord) => {
+        if (ord.id === orderId) {
+          return {
+            ...ord,
+            status: 'Selesai' as const,
+            statusStep: 4,
+          };
+        }
+        return ord;
+      });
+      try {
+        localStorage.setItem('imm_user_orders', JSON.stringify(updated));
+      } catch (e) {
+        console.error(e);
+      }
+      return updated;
+    });
+
+    if (selectedOrder && selectedOrder.id === orderId) {
+      setSelectedOrder(null);
+    }
+
+    showToast(
+      isEn
+        ? 'Order completed & archived to Order History!'
+        : 'Pesanan telah selesai & masuk ke riwayat pesanan!'
+    );
+  };
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
     if (onUpdateUser) {
@@ -333,12 +524,13 @@ export const ProfileHub: React.FC<ProfileHubProps> = ({
 
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-base sm:text-lg font-bold font-display text-[#1c1b1b] tracking-tight">
-                {name || currentUser.name}
+              <h2 className="text-base sm:text-lg font-bold font-display text-[#1c1b1b] tracking-tight flex items-center gap-1.5">
+                <span>{name || currentUser.name}</span>
+                <svg className="w-4.5 h-4.5 text-[#0095f6] shrink-0 inline-block" viewBox="0 0 24 24" fill="currentColor">
+                  <title>{t.verified}</title>
+                  <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.79-4-4-4-.495 0-.965.084-1.4.238C14.55 2.475 13.18 1.6 11.6 1.6c-1.58 0-2.95.875-3.6 2.148-.435-.154-.905-.238-1.4-.238-2.21 0-4 1.79-4 4 0 .495.084.965.238 1.4C1.475 9.55.6 10.92.6 12.5c0 1.58.875 2.95 2.148 3.6-.154.435-.238.905-.238 1.4 0 2.21 1.79 4 4 4 .495 0 .965-.084 1.4-.238 1.05 1.273 2.42 2.148 4 2.148 1.58 0 2.95-.875 3.6-2.148.435.154.905.238 1.4.238 2.21 0 4-1.79 4-4 0-.495-.084-.965-.238-1.4 1.273-1.05 2.148-2.42 2.148-4zM10 17.2l-4.2-4.2 1.4-1.4 2.8 2.8 7.2-7.2 1.4 1.4L10 17.2z"/>
+                </svg>
               </h2>
-              <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#0056c8]/10 text-[#0056c8] text-[10px] font-bold uppercase tracking-wider border border-[#0056c8]/20">
-                {t.vipClient}
-              </span>
             </div>
             <p className="text-xs text-gray-500 mt-0.5 flex items-center gap-2">
               <span>{email || currentUser.email}</span>
@@ -451,6 +643,18 @@ export const ProfileHub: React.FC<ProfileHubProps> = ({
           >
             <span className="material-symbols-outlined text-[18px]">support_agent</span>
             <span>{t.supportTab}</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('redeem')}
+            className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 whitespace-nowrap btn-spring shrink-0 ${
+              activeTab === 'redeem'
+                ? 'bg-[#0056c8] text-white shadow-xs'
+                : 'text-gray-600 hover:text-[#1c1b1b] hover:bg-gray-100/70'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[18px]">confirmation_number</span>
+            <span>{isEn ? 'Redeem Code' : 'Redeem Code'}</span>
           </button>
 
           {/* Mobile Logout item */}
@@ -826,6 +1030,8 @@ export const ProfileHub: React.FC<ProfileHubProps> = ({
                             className={`px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 ${
                               order.status === 'Selesai'
                                 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                : order.statusStep === 4
+                                ? 'bg-amber-50 text-amber-800 border border-amber-300'
                                 : 'bg-blue-50 text-[#0056c8] border border-blue-200'
                             }`}
                           >
@@ -835,13 +1041,15 @@ export const ProfileHub: React.FC<ProfileHubProps> = ({
                               }`}
                             />
                             <span>
-                              {order.status === 'Dipotong & Dijahit'
-                                ? t.statusStep1
-                                : order.status === 'Proses QC'
-                                ? t.statusStep2
-                                : order.status === 'Dalam Pengiriman'
-                                ? t.statusStep3
-                                : t.statusStep4}
+                              {order.status === 'Selesai'
+                                ? (isEn ? 'Selesai' : 'Selesai')
+                                : order.statusStep === 1
+                                ? '1. Cutting & Sewing'
+                                : order.statusStep === 2
+                                ? '2. QC Inspection'
+                                : order.statusStep === 3
+                                ? '3. In Transit'
+                                : '4. Delivered'}
                             </span>
                           </span>
                         </div>
@@ -882,7 +1090,17 @@ export const ProfileHub: React.FC<ProfileHubProps> = ({
                           </span>
                         </div>
 
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
+                          {(order.statusStep >= 4 || order.status === 'Delivered' || order.status === 'Sampai') && order.status !== 'Selesai' && (
+                            <button
+                              onClick={() => handleCompleteOrder(order.id)}
+                              className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all flex items-center gap-1.5 btn-spring shadow-xs"
+                            >
+                              <span className="material-symbols-outlined text-[16px]">check_circle</span>
+                              <span>{isEn ? 'Complete Order' : 'Pesanan Selesai'}</span>
+                            </button>
+                          )}
+
                           <button
                             onClick={() => setSelectedOrder(order)}
                             className="px-3 py-1.5 rounded-xl border border-gray-200 hover:border-[#0056c8] text-xs font-bold text-gray-700 hover:text-[#0056c8] transition-all flex items-center gap-1.5 btn-spring"
@@ -1032,12 +1250,12 @@ export const ProfileHub: React.FC<ProfileHubProps> = ({
                   </span>
                   <div>
                     <h4 className="text-sm font-bold text-[#001945]">Atelier Private Concierge</h4>
-                    <p className="text-xs text-[#003178] mt-0.5">WhatsApp direct line: +62 812-8821-9000 (24 Jam)</p>
+                    <p className="text-xs text-[#003178] mt-0.5">WhatsApp direct line: 0857 1230 8673 (24 Jam)</p>
                   </div>
                 </div>
 
                 <a
-                  href="https://wa.me/6281288219000?text=Halo%20Atelier%20ImmAdNgrh,%20saya%20klien%20VIP%20ingin%20berkonsultasi"
+                  href="https://wa.me/6285712308673?text=Halo%20Atelier%20ImmAdNgrh,%20saya%20klien%20VIP%20ingin%20berkonsultasi"
                   target="_blank"
                   rel="noreferrer"
                   className="px-4 py-2.5 rounded-xl bg-[#0056c8] hover:bg-[#0041a3] text-white text-xs font-bold text-center transition-all btn-spring shadow-xs"
@@ -1078,6 +1296,115 @@ export const ProfileHub: React.FC<ProfileHubProps> = ({
               </div>
             </div>
           )}
+
+          {/* ================= 5. TAB REDEEM CODE ================= */}
+          {activeTab === 'redeem' && (
+            <div className="space-y-6 animate-fade-in max-w-2xl">
+              <div>
+                <h3 className="text-base sm:text-lg font-bold font-display text-[#1c1b1b]">
+                  {isEn ? 'Redeem Code & Voucher' : 'Redeem Code & Voucher Diskon'}
+                </h3>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  {isEn
+                    ? 'Enter the exclusive promotional code released by admin to receive special discounts on your allocations.'
+                    : 'Masukkan kode promo eksklusif yang disebar oleh admin untuk mendapatkan potongan harga spesial pada pesanan Anda.'}
+                </p>
+              </div>
+
+              {/* Redeem Form */}
+              <form onSubmit={handleRedeemCode} className="p-5 bg-white rounded-2xl border border-gray-200/80 space-y-4 shadow-2xs">
+                <div>
+                  <label className="text-xs font-bold text-[#1c1b1b] block mb-1.5">
+                    {isEn ? 'Enter Redeem Code' : 'Kode Redeem Admin'}
+                  </label>
+                  <div className="flex flex-col sm:flex-row gap-2.5">
+                    <input
+                      type="text"
+                      value={redeemInput}
+                      onChange={(e) => {
+                        setRedeemInput(e.target.value);
+                        setRedeemError(null);
+                      }}
+                      placeholder="isi dengan benar"
+                      className="flex-1 px-4 py-3 rounded-xl bg-gray-50/70 border border-gray-200 text-xs font-mono font-bold text-[#1c1b1b] placeholder:text-gray-400 placeholder:font-sans focus:bg-white focus:outline-none focus:border-[#0056c8] transition-all"
+                    />
+                    <button
+                      type="submit"
+                      className="px-6 py-3 rounded-xl bg-[#0056c8] hover:bg-[#0041a3] text-white text-xs font-bold uppercase tracking-wider transition-all btn-spring shadow-md shrink-0 flex items-center justify-center gap-2"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">verified</span>
+                      <span>{isEn ? 'Redeem Code' : 'Tukarkan Kode'}</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Error Alert */}
+                {redeemError && (
+                  <div className="p-3.5 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600 font-semibold flex items-center gap-2 animate-fade-in">
+                    <span className="material-symbols-outlined text-[18px] shrink-0">error</span>
+                    <span>{redeemError}</span>
+                  </div>
+                )}
+
+                {/* Success Alert */}
+                {redeemSuccess && (
+                  <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 font-semibold flex items-center gap-2 animate-fade-in">
+                    <span className="material-symbols-outlined text-[18px] text-emerald-600 shrink-0">check_circle</span>
+                    <span>{redeemSuccess}</span>
+                  </div>
+                )}
+              </form>
+
+              {/* Currently Active Redeemed Code Card */}
+              {activeRedeemedPromo && (
+                <div className="p-5 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-2xl space-y-3 shadow-2xs">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300">
+                      {isEn ? 'Active Voucher' : 'Voucher Aktif Terpasang'}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleRemoveRedeemedPromo}
+                      className="text-xs font-bold text-red-600 hover:text-red-700 hover:underline flex items-center gap-1"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">delete</span>
+                      <span>{isEn ? 'Remove' : 'Hapus Kode'}</span>
+                    </button>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-1">
+                    <div>
+                      <div className="text-base font-black font-mono text-emerald-950 tracking-wider">
+                        {activeRedeemedPromo.code}
+                      </div>
+                      <div className="text-xs text-emerald-700 mt-0.5 font-bold">
+                        {isEn
+                          ? `Potongan harga ${activeRedeemedPromo.percent}% (Otomatis Diterapkan)`
+                          : `Potongan harga ${activeRedeemedPromo.percent}% (Otomatis Diterapkan saat Checkout)`}
+                      </div>
+                    </div>
+
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-black text-sm shrink-0 shadow-sm">
+                      -{activeRedeemedPromo.percent}%
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Information Note */}
+              <div className="p-4 bg-gray-50 rounded-2xl border border-gray-200/60 text-xs text-gray-500 space-y-2">
+                <div className="font-bold text-[#1c1b1b] flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-[16px] text-[#0056c8]">info</span>
+                  <span>{isEn ? 'Information' : 'Catatan Penggunaan Kode'}</span>
+                </div>
+                <p className="leading-relaxed">
+                  {isEn
+                    ? 'Redeemed codes will be automatically applied to your checkout cart. Voucher discount applies to subtotal amount.'
+                    : 'Kode yang berhasil ditukarkan akan otomatis tersimpan di akun Anda dan diterapkan saat melakukan pemesanan.'}
+                </p>
+              </div>
+            </div>
+          )}
         </main>
       </div>
 
@@ -1108,10 +1435,10 @@ export const ProfileHub: React.FC<ProfileHubProps> = ({
             {/* Tracking Steps Timeline */}
             <div className="space-y-4 py-2">
               {[
-                { step: 1, label: t.statusStep1, desc: 'Pattern drafted & French Terry tension verified' },
-                { step: 2, label: t.statusStep2, desc: 'Zero-torque drape inspection & seam check' },
-                { step: 3, label: t.statusStep3, desc: 'Dispatched via Express Courier VIP' },
-                { step: 4, label: t.statusStep4, desc: 'Delivered securely to client destination' },
+                { step: 1, label: '1. Cutting & Sewing', desc: 'Pattern drafted & French Terry tension verified' },
+                { step: 2, label: '2. QC Inspection', desc: 'Zero-torque drape inspection & seam check' },
+                { step: 3, label: '3. In Transit', desc: 'Dispatched via Express Courier VIP' },
+                { step: 4, label: '4. Delivered', desc: 'Delivered securely to client destination' },
               ].map((s) => (
                 <div key={s.step} className="flex items-start gap-3 relative">
                   <div
@@ -1137,12 +1464,28 @@ export const ProfileHub: React.FC<ProfileHubProps> = ({
               ))}
             </div>
 
-            <button
-              onClick={() => setSelectedOrder(null)}
-              className="w-full py-2.5 rounded-xl bg-[#1c1b1b] text-white text-xs font-bold uppercase tracking-wider btn-spring"
-            >
-              {isEn ? 'Close Tracking' : 'Tutup Pelacakan'}
-            </button>
+            {selectedOrder.statusStep >= 4 && selectedOrder.status !== 'Selesai' ? (
+              <div className="space-y-2 pt-1">
+                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 flex items-center gap-2 font-medium">
+                  <span className="material-symbols-outlined text-[18px] text-emerald-600 shrink-0">mark_email_read</span>
+                  <span>{isEn ? 'Garment delivered to client destination. Please confirm order completion.' : 'Pesanan telah sampai di tujuan. Silakan tekan tombol di bawah untuk konfirmasi.'}</span>
+                </div>
+                <button
+                  onClick={() => handleCompleteOrder(selectedOrder.id)}
+                  className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold uppercase tracking-wider btn-spring flex items-center justify-center gap-2 shadow-md"
+                >
+                  <span className="material-symbols-outlined text-[18px]">check_circle</span>
+                  <span>{isEn ? 'Complete Order & Move to History' : 'Pesanan Selesai'}</span>
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setSelectedOrder(null)}
+                className="w-full py-2.5 rounded-xl bg-[#1c1b1b] text-white text-xs font-bold uppercase tracking-wider btn-spring"
+              >
+                {isEn ? 'Close Tracking' : 'Tutup Pelacakan'}
+              </button>
+            )}
           </div>
         </div>
       )}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Product } from '../types';
 import { useLocalization } from '../context/LocalizationContext';
+import editorialConceptImg from '../assets/images/editorial_page7_brutalist_concept_1790896982597.jpg';
 
 interface EditorialShowcaseProps {
   signatureProduct: Product;
@@ -20,8 +21,8 @@ export const EditorialShowcase: React.FC<EditorialShowcaseProps> = ({
         <div className="relative w-full min-h-[460px] sm:min-h-[520px] lg:h-[640px] rounded-3xl overflow-hidden bg-[#e5e2e1] flex items-end p-4 sm:p-8 lg:p-12 shadow-xl group">
           {/* Background Architectural Photo with Smooth Parallax Zoom */}
           <img
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNtMt1iU_Jklg7JRFvidUNaLDRowl7Ea501mhM8U922XkXVXy8ssxzeCGTVYssiwnlpPbM2hlYDL2UX_NF54aQzBGAq1FxeLr_oOb27lOZdvyIkWGPDpDct4jYJnOqyfMYpfXYQzI-l3U0xhnf8oJzqsusADC4Bd-agNEb4vhCeizDvGR5tLTmxlUWBoAv7Qu-dToWj2RMgiqfyydM9RisbNHVDEw997SPd1vC_YYeWntbuHetQUKY"
-            alt="ImmAdNgrh Signature Tee in brutalist concrete gallery corridor"
+            src={editorialConceptImg}
+            alt="ImmAdNgrh Signature Tee in brutalist concrete architectural gallery"
             className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-1000 ease-out group-hover:scale-105"
           />
 

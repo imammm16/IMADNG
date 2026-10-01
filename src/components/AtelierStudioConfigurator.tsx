@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { useLocalization } from '../context/LocalizationContext';
 import { Product } from '../types';
+import configuratorWhitePodium from '../assets/images/configurator_white_podium_1790897097817.jpg';
+import configuratorBlackPodium from '../assets/images/configurator_black_podium_1790897112581.jpg';
+import configuratorGrayPodium from '../assets/images/configurator_gray_podium_1790897125878.jpg';
+import configuratorNavyPodium from '../assets/images/configurator_navy_podium_1790897138316.jpg';
 
 interface AtelierStudioConfiguratorProps {
   products: Product[];
@@ -51,7 +55,7 @@ const COLORS: ColorOption[] = [
     nameId: 'Pure Chalk White',
     nameEn: 'Pure Chalk White',
     hex: '#F5F5F7',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBxFxFlsmFr5ETdj1pH8YkG3-QnRrhFMGpgqLwgnjyhVYuYp_Bl1ujUsA6PjOjyZoHHaD5PcbJtynNrEesYyHYy52z_kKGGwwTzpvIKd_PHHmZGvMs4Nez-LeODbSVohycdtZHv2zcQWWsn2sv5Me87mGM3wXDtdPN_QZjP9JBlWbeilNEagp9vpjtWIDZLc7csIRIdw_0mUJMZXCZJeT9Tq-r14NZrM2E0fkviD54p33ajobmqk951',
+    image: configuratorWhitePodium,
     productId: 'tee-01',
   },
   {
@@ -59,7 +63,7 @@ const COLORS: ColorOption[] = [
     nameId: 'Obsidian Black',
     nameEn: 'Obsidian Black',
     hex: '#171717',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCNtMt1iU_Jklg7JRFvidUNaLDRowl7Ea501mhM8U922XkXVXy8ssxzeCGTVYssiwnlpPbM2hlYDL2UX_NF54aQzBGAq1FxeLr_oOb27lOZdvyIkWGPDpDct4jYJnOqyfMYpfXYQzI-l3U0xhnf8oJzqsusADC4Bd-agNEb4vhCeizDvGR5tLTmxlUWBoAv7Qu-dToWj2RMgiqfyydM9RisbNHVDEw997SPd1vC_YYeWntbuHetQUKY',
+    image: configuratorBlackPodium,
     productId: 'tee-02',
   },
   {
@@ -67,7 +71,7 @@ const COLORS: ColorOption[] = [
     nameId: 'Concrete Melange',
     nameEn: 'Concrete Melange',
     hex: '#9E9EA2',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAWowrSlA6JW-bOmR_pj0gvXcorjQ_7aI3iNCFf7jmdqCQDBg-khevNpoLBI7X6Ts3vPd4HPeWhc_s2Xb-iKGaZUWTg_7sT5D8NrWq1oJnrr7NxM_p_bAdHavVsIS3jABtEQg6_ryElOl1UjZuSfPa59a2OG0hEQqCHiC04Py6B-rm4NNPqnr0rvPhqNm-blOABrruDCub3dvyWOdaA1-ZRNwwbsDsk0uJmOPe4zwX68p8awWkUKoLm',
+    image: configuratorGrayPodium,
     productId: 'tee-04',
   },
   {
@@ -75,7 +79,7 @@ const COLORS: ColorOption[] = [
     nameId: 'Midnight Archival Navy',
     nameEn: 'Midnight Archival Navy',
     hex: '#16233B',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCNtMt1iU_Jklg7JRFvidUNaLDRowl7Ea501mhM8U922XkXVXy8ssxzeCGTVYssiwnlpPbM2hlYDL2UX_NF54aQzBGAq1FxeLr_oOb27lOZdvyIkWGPDpDct4jYJnOqyfMYpfXYQzI-l3U0xhnf8oJzqsusADC4Bd-agNEb4vhCeizDvGR5tLTmxlUWBoAv7Qu-dToWj2RMgiqfyydM9RisbNHVDEw997SPd1vC_YYeWntbuHetQUKY',
+    image: configuratorNavyPodium,
     productId: 'tee-03',
   },
 ];
